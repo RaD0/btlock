@@ -1,0 +1,28 @@
+#! /bin/sh
+
+device="68:C4:4D:17:6F:A7"
+rssi_limit="-10"
+screen_locked=false
+logs="/tmp/btlock.log"
+
+echo "[`date`]Started" >> $logs	
+
+while : 
+do
+	if hcitool con | grep $device > /dev/null
+	then
+		rssi=`hcitool rssi $device | sed 's/.*: \([-0-9]\+\).*/\1/'`	
+		if [[ $rssi -lt $rssi_limit ]] && ! $screen_locked ; then
+			echo "`date` Locking screen. RSSI: $rssi" >> $logs
+			DISPLAY=:0 gnome-screensaver-command -l
+			screen_locked=true
+		elif [[ $rssi -ge 0 ]] && $screen_locked ; then
+			echo "`date` Unocking screen. RSSI: $rssi" >> $logs
+			DISPLAY=:0 gnome-screensaver-command -d
+			screen_locked=false
+			xdotool mousemove 0 0
+		fi
+	fi
+done
+	
+

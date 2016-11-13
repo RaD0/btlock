@@ -1,11 +1,11 @@
 #! /bin/sh
 
-device="68:C4:4D:17:6F:A7"
-rssi_limit="-10"
+device=$1
+rssi_limit=$2
 screen_locked=false
 logs="/tmp/btlock.log"
 
-echo "[`date`]Started" >> $logs	
+echo "[`date`]Started" >> $logs		
 
 while : 
 do
